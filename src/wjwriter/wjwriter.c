@@ -817,12 +817,19 @@ EXPORT XplBool WJWUInt64(char *name, uint64 value, WJWriter doc)
 	return(WJWNumber(name, v, s, doc));
 }
 
-EXPORT XplBool WJWDouble(char *name, double value, WJWriter doc)
+EXPORT XplBool WJWDouble(char *name, double value, int32 decimal_places, WJWriter doc)
 {
 	char		v[256];
+	char 		format[5];
 	size_t		s;
 
-	s = strprintf(v, sizeof(v), NULL, "%e", value);
+	if (decimal_places > 0) {
+		sprintf(format, "%%.%df", decimal_places);
+	}
+	else {
+		strcpy(format, "%e");
+	}
+	s = strprintf(v, sizeof(v), NULL, format, value);
 	return(WJWNumber(name, v, s, doc));
 }
 

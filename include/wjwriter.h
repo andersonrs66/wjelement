@@ -113,7 +113,7 @@ EXPORT XplBool			WJWInt32(char *name, int32 value, WJWriter doc);
 EXPORT XplBool			WJWUInt32(char *name, uint32 value, WJWriter doc);
 EXPORT XplBool			WJWInt64(char *name, int64 value, WJWriter doc);
 EXPORT XplBool			WJWUInt64(char *name, uint64 value, WJWriter doc);
-EXPORT XplBool			WJWDouble(char *name, double value, WJWriter doc);
+EXPORT XplBool			WJWDouble(char *name, double value, int32 decimal_places, WJWriter doc);
 
 /*
 	Write a raw pre-formatted value to the document.  It is up to the caller to

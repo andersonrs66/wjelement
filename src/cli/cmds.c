@@ -238,7 +238,7 @@ static int WJECLISave(WJElement *doc, WJElement *current, char *line)
 	} else {
 		writer->base = wje.base;
 
-		if (!WJEWriteDocument(e, writer, NULL)) {
+		if (!WJEWriteDocument(e, writer, NULL, 0)) {
 			fprintf(stderr, "Internal error, failed to save JSON document\n");
 			r = 5;
 		} else {
@@ -290,7 +290,7 @@ static int WJECLIPrint(WJElement *doc, WJElement *current, char *line)
 	} else {
 		writer->base = wje.base;
 
-		if (!WJEWriteDocument(e, writer, NULL)) {
+		if (!WJEWriteDocument(e, writer, NULL, 0)) {
 			fprintf(stderr, "Internal error, failed to write JSON document\n");
 			r = 5;
 		}
@@ -298,7 +298,7 @@ static int WJECLIPrint(WJElement *doc, WJElement *current, char *line)
 		while (!r && selector && (e = findElement(c, selector, e))) {
 			fprintf(stdout, "\n");
 
-			if (!WJEWriteDocument(e, writer, NULL)) {
+			if (!WJEWriteDocument(e, writer, NULL, 0)) {
 				fprintf(stderr, "Internal error, failed to write JSON document\n");
 				r = 5;
 			}

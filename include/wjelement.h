@@ -178,8 +178,8 @@ EXPORT WJElement	__WJEFromString(const char *json, char quote, const char *file,
 	If the consumer and WJE are linked to separate memory libraries, it may be
 	necessary to call WJEMemFree() instead.
 */
-EXPORT char *		_WJEToString(WJElement document, XplBool pretty, const char *file, const int line);
-#define WJEToString( d, p ) _WJEToString( (d), (p), __FILE__, __LINE__)
+EXPORT char *		_WJEToString(WJElement document, XplBool pretty, int32 decimal_places, const char *file, const int line);
+#define WJEToString( d, p, dec ) _WJEToString( (d), (p), (dec), __FILE__, __LINE__)
 
 /* Read or write a WJElement to a file by path */
 EXPORT WJElement	WJEFromFile(const char *path);
@@ -199,8 +199,8 @@ EXPORT WJElement	_WJEOpenDocument(WJReader reader, char *where, WJELoadCB loadcb
 /* Write a WJElement object to the provided WJWriter */
 typedef XplBool		(* WJEWriteCB)(WJElement node, WJWriter writer, void *data);
 EXPORT XplBool		_WJEWriteDocument(WJElement document, WJWriter writer, char *name,
-						WJEWriteCB precb, WJEWriteCB postcb, void *data);
-#define				WJEWriteDocument(d, w, n) _WJEWriteDocument((d), (w), (n), NULL, NULL, NULL)
+						WJEWriteCB precb, WJEWriteCB postcb, void *data, int32 decimal_places);
+#define				WJEWriteDocument(d, w, n, dec) _WJEWriteDocument((d), (w), (n), NULL, NULL, NULL, (dec))
 
 /* Write a WJElement object to the provided FILE* */
 EXPORT void			WJEWriteFILE(WJElement document, FILE* fd);

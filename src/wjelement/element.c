@@ -417,13 +417,13 @@ EXPORT WJElement __WJEFromString(const char *json, char quote, const char *file,
 	return(doc);
 }
 
-EXPORT char * _WJEToString(WJElement document, XplBool pretty, const char *file, const int line)
+EXPORT char * _WJEToString(WJElement document, XplBool pretty, int32 decimal_places, const char *file, const int line)
 {
 	WJWriter		writer;
 	char			*mem	= NULL;
 
 	if ((writer = WJWOpenMemDocument(pretty, &mem))) {
-		WJEWriteDocument(document, writer, NULL);
+		WJEWriteDocument(document, writer, NULL, decimal_places);
 		WJWCloseDocument(writer);
 	}
 	if (mem) {
@@ -468,7 +468,7 @@ EXPORT XplBool WJEToFile(WJElement document, XplBool pretty, const char *path)
 
 	if ((f = fopen(path, "wb"))) {
 		if ((writer = WJWOpenFILEDocument(pretty, f))) {
-			ret = WJEWriteDocument(document, writer, NULL);
+			ret = WJEWriteDocument(document, writer, NULL, 0);
 
 			WJWCloseDocument(writer);
 		}
@@ -600,7 +600,7 @@ EXPORT XplBool WJEMergeObjects(WJElement to, WJElement from, XplBool overwrite)
 }
 
 EXPORT XplBool _WJEWriteDocument(WJElement document, WJWriter writer, char *name,
-						WJEWriteCB precb, WJEWriteCB postcb, void *data)
+						WJEWriteCB precb, WJEWriteCB postcb, void *data, int32 decimal_places)
 {
 	_WJElement	*current = (_WJElement *) document;
 	WJElement	child;
@@ -629,7 +629,7 @@ EXPORT XplBool _WJEWriteDocument(WJElement document, WJWriter writer, char *name
 				child = current->pub.child;
 				do {
 					_WJEWriteDocument(child, writer, child ? child->name : NULL,
-						precb, postcb, data);
+						precb, postcb, data, decimal_places);
 				} while (child && (child = child->next));
 
 				WJWCloseObject(writer);
@@ -641,7 +641,7 @@ EXPORT XplBool _WJEWriteDocument(WJElement document, WJWriter writer, char *name
 				child = current->pub.child;
 				do {
 					_WJEWriteDocument(child, writer, NULL,
-						precb, postcb, data);
+						precb, postcb, data, decimal_places);
 				} while (child && (child = child->next));
 
 				WJWCloseArray(writer);
@@ -658,9 +658,9 @@ EXPORT XplBool _WJEWriteDocument(WJElement document, WJWriter writer, char *name
 				if (current->value.number.hasDecimalPoint) {
 					current->pub.type = WJR_TYPE_NUMBER;
 					if (!current->value.number.negative) {
-						WJWDouble(name, current->value.number.d, writer);
+						WJWDouble(name, current->value.number.d, decimal_places, writer);
 					} else {
-						WJWDouble(name, -current->value.number.d, writer);
+						WJWDouble(name, -current->value.number.d, decimal_places, writer);
 					}
 				} else {
 #ifdef WJE_DISTINGUISH_INTEGER_TYPE
@@ -757,7 +757,7 @@ EXPORT void WJEWriteFILE(WJElement document, FILE* fd)
 	WJWriter		dumpWriter;
 
 	if ((dumpWriter = WJWOpenFILEDocument(TRUE, fd))) {
-		WJEWriteDocument(document, dumpWriter, NULL);
+		WJEWriteDocument(document, dumpWriter, NULL, 0);
 		WJWCloseDocument(dumpWriter);
 	}
 	fprintf(fd, "\n");
@@ -774,7 +774,7 @@ EXPORT void WJEDumpFile(WJElement document)
 
 	if ((file = fopen(path, "wb"))) {
 		if ((dumpWriter = WJWOpenFILEDocument(TRUE, file))) {
-			WJEWriteDocument(document, dumpWriter, NULL);
+			WJEWriteDocument(document, dumpWriter, NULL, 0);
 			WJWCloseDocument(dumpWriter);
 		}
 		fprintf(file, "\n");
